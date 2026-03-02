@@ -340,6 +340,10 @@
                 <h3>Issues Found (Monthly)</h3>
                 <div class="chart-container"><canvas id="bugbotTrendChart"></canvas></div>
             </div>
+            <div class="chart-card">
+                <h3>Severity Distribution</h3>
+                <div class="chart-container"><canvas id="bugbotSeverityChart"></canvas></div>
+            </div>
         </div>
     </div>
 
@@ -507,7 +511,7 @@ const netLines = totalAdditions - totalDeletions;
 const kpis = [
     { value: '377', label: 'Active Repositories', change: 'GitHub (lusha-com)', type: 'neutral' },
     { value: '12,549', label: 'BugBot Issues Found', change: '4,774 PRs reviewed', type: 'neutral' },
-    { value: '59.9%', label: 'BugBot Issues Resolved', change: 'Oct 25 - Feb 26', type: 'positive' },
+    { value: '62.3%', label: 'BugBot Issues Resolved', change: 'Oct 25 - Feb 26', type: 'positive' },
     { value: totalCreated.toLocaleString(), label: 'Total PRs Created (13mo)', change: 'GitHub', type: 'neutral' },
     { value: claudeUsersFeb, label: 'Claude Users (Feb 26)', change: 'Was 9 in Jul 25', type: 'positive' },
     { value: '97', label: 'Cursor Users', change: 'Aug 25 - Feb 26', type: 'positive' },
@@ -850,6 +854,47 @@ new Chart(document.getElementById('bugbotTrendChart'), {
         scales: {
             ...chartDefaults.scales,
             y: { ...chartDefaults.scales.y, beginAtZero: true, title: { display: true, text: 'Issues Found', color: '#9aa0a6' } }
+        }
+    }
+});
+
+// 10b. BugBot Severity Distribution
+new Chart(document.getElementById('bugbotSeverityChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['High', 'Medium', 'Low'],
+        datasets: [{
+            data: [4646, 5800, 1690],
+            backgroundColor: ['#dc2626', '#f59e0b', '#22c55e'],
+            borderColor: '#1a1d27',
+            borderWidth: 3
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '55%',
+        plugins: {
+            legend: {
+                position: 'right',
+                labels: { color: '#9aa0a6', font: { size: 13 }, padding: 16, usePointStyle: true, pointStyle: 'circle' }
+            },
+            tooltip: {
+                backgroundColor: '#1a1d27',
+                titleColor: '#e8eaed',
+                bodyColor: '#9aa0a6',
+                borderColor: '#2d3148',
+                borderWidth: 1,
+                cornerRadius: 8,
+                padding: 12,
+                callbacks: {
+                    label: function(ctx) {
+                        const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                        const pct = ((ctx.raw / total) * 100).toFixed(1);
+                        return `${ctx.label}: ${ctx.raw.toLocaleString()} (${pct}%)`;
+                    }
+                }
+            }
         }
     }
 });
