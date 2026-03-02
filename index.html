@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lusha R&D Transformation Report | Feb 2025 - Feb 2026</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0f1117;
+            --bg-card: #1a1d27;
+            --bg-card-hover: #222636;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+            --accent-blue: #4a9eff;
+            --accent-green: #34d399;
+            --accent-purple: #a78bfa;
+            --accent-orange: #fb923c;
+            --accent-red: #f87171;
+            --accent-cyan: #22d3ee;
+            --accent-pink: #f472b6;
+            --accent-yellow: #fbbf24;
+            --border: #2d3148;
+            --gradient-1: linear-gradient(135deg, #4a9eff 0%, #a78bfa 100%);
+            --gradient-2: linear-gradient(135deg, #34d399 0%, #22d3ee 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 48px 24px;
+            background: linear-gradient(180deg, rgba(74, 158, 255, 0.08) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .header .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-blue);
+        }
+
+        .kpi-value {
+            font-size: 2.4rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .kpi-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kpi-change {
+            font-size: 0.85rem;
+            margin-top: 8px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .kpi-change.positive { background: rgba(52, 211, 153, 0.15); color: var(--accent-green); }
+        .kpi-change.negative { background: rgba(248, 113, 113, 0.15); color: var(--accent-red); }
+        .kpi-change.neutral { background: rgba(154, 160, 166, 0.15); color: var(--text-secondary); }
+
+        .section {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title .icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 24px;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .chart-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .chart-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 320px;
+        }
+
+        .chart-container.tall {
+            height: 400px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.1) 0%, rgba(167, 139, 250, 0.1) 100%);
+            border: 1px solid rgba(74, 158, 255, 0.3);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .highlight-box h2 {
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+        }
+
+        .highlight-box p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 32px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            margin-top: 48px;
+        }
+
+        .insight-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(74, 158, 255, 0.1);
+            border: 1px solid rgba(74, 158, 255, 0.3);
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            color: var(--accent-blue);
+            margin: 4px;
+        }
+
+        .insights-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .data-source-tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-right: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            vertical-align: middle;
+        }
+        .tag-git { background: rgba(248, 113, 113, 0.2); color: #f87171; }
+        .tag-cursor { background: rgba(167, 139, 250, 0.2); color: #a78bfa; }
+        .tag-claude { background: rgba(251, 146, 60, 0.2); color: #fb923c; }
+        .tag-jira { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+        .tag-bugbot { background: rgba(139, 92, 246, 0.2); color: #8b5cf6; }
+
+        @media (max-width: 768px) {
+            .chart-grid { grid-template-columns: 1fr; }
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+            .header h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>R&D Transformation Report</h1>
+    <div class="subtitle">Lusha Engineering | February 2025 - February 2026</div>
+</div>
+
+<div class="container">
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid" id="kpiGrid"></div>
+
+    <!-- AI Adoption Highlight -->
+    <div class="highlight-box">
+        <h2>AI-Powered Development Revolution</h2>
+        <p>From 9 Claude users in Jul 2025 to 30 in Feb 2026. 97 Cursor users across the org.
+        AI-assisted commits reached 4,600/month and AI requests surpassed 15,000/month.</p>
+        <div class="insights-row" id="insightBadges"></div>
+    </div>
+
+    <!-- Section 1: Claude Usage -->
+    <div class="section">
+        <div class="section-title">
+            <span class="icon" style="background: rgba(251, 146, 60, 0.2);">&#x1F9E0;</span>
+            Claude Usage
+            <span class="data-source-tag tag-claude">Claude API</span>
+        </div>
+        <div class="chart-grid">
+            <div class="chart-card">
+                <h3>Claude Active Users Per Month</h3>
+                <div class="chart-container"><canvas id="claudeUsersChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3>Claude Output Tokens Per Month</h3>
+                <div class="chart-container"><canvas id="claudeTokensChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Cursor Usage -->
+    <div class="section">
+        <div class="section-title">
+            <span class="icon" style="background: rgba(167, 139, 250, 0.2);">&#x1F4BB;</span>
+            Cursor Usage
+            <span class="data-source-tag tag-cursor">Cursor Analytics</span>
+        </div>
+        <div class="chart-grid">
+            <div class="chart-card">
+                <h3>Cursor Daily Active Users (Avg & Max)</h3>
+                <div class="chart-container"><canvas id="cursorDauChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3>Total AI Requests Per Month</h3>
+                <div class="chart-container"><canvas id="cursorRequestsChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3>AI Commits Per Month</h3>
+                <div class="chart-container"><canvas id="aiCommitsChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3>Tab Completions: Accepts vs Suggestions</h3>
+                <div class="chart-container"><canvas id="tabChart"></canvas></div>
+            </div>
+            <div class="chart-card full-width">
+                <h3>AI Lines of Code vs Total Lines (Cursor)</h3>
+                <div class="chart-container tall"><canvas id="aiLinesChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: Jira Activity -->
+    <div class="section">
+        <div class="section-title">
+            <span class="icon" style="background: rgba(251, 191, 36, 0.2);">&#x1F4CB;</span>
+            Jira Activity (Feb 2025 - Feb 2026)
+            <span class="data-source-tag tag-jira">Jira</span>
+        </div>
+        <div class="chart-grid">
+            <div class="chart-card">
+                <h3>Issues Created Per Month (by Type)</h3>
+                <div class="chart-container"><canvas id="jiraIssuesChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3>Story Points Completed Per Month</h3>
+                <div class="chart-container"><canvas id="jiraStoryPointsChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 4: BugBot Analysis -->
+    <div class="section">
+        <div class="section-title">
+            <span class="icon" style="background: rgba(139, 92, 246, 0.2);">&#x1F41B;</span>
+            BugBot Code Review (Oct 2025 - Feb 2026)
+            <span class="data-source-tag tag-bugbot">BugBot</span>
+        </div>
+        <div class="chart-grid">
+            <div class="chart-card">
+                <h3>Issues Found (Monthly)</h3>
+                <div class="chart-container"><canvas id="bugbotTrendChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 5: Development Velocity -->
+    <div class="section">
+        <div class="section-title">
+            <span class="icon" style="background: rgba(74, 158, 255, 0.2);">&#x26A1;</span>
+            Development Velocity
+            <span class="data-source-tag tag-git">GitHub</span>
+        </div>
+        <div class="chart-grid">
+            <div class="chart-card">
+                <h3>PRs Merged Per Month</h3>
+                <div class="chart-container"><canvas id="prsMergedChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3>PRs Created Per Month</h3>
+                <div class="chart-container"><canvas id="prsCreatedChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 4: Code Volume (Exact) -->
+    <div class="section">
+        <div class="section-title">
+            <span class="icon" style="background: rgba(52, 211, 153, 0.2);">&#x1F4CA;</span>
+            Code Volume (Exact)
+            <span class="data-source-tag tag-git">GitHub</span>
+        </div>
+        <div class="chart-grid">
+            <div class="chart-card full-width">
+                <h3>Lines Added vs Deleted Per Month (All Merged PRs)</h3>
+                <div class="chart-container tall"><canvas id="codeVolumeChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="footer">
+    <p>Data sourced from: GitHub API (lusha-com org, all merged PRs), Anthropic Claude API usage reports (Jul 25 - Feb 26), Cursor Team analytics (Aug 25 - Feb 26), Jira REST API (Feb 2025 - Feb 2026), BugBot (Oct 25 - Feb 26, 377 repos)</p>
+    <p style="margin-top: 8px;">All data is based on actual metrics - no estimates or projections. Code volume = exact sum of additions/deletions across all merged PRs.</p>
+    <p style="margin-top: 4px;">Generated on March 2, 2026</p>
+</div>
+
+<script>
+// ===== GITHUB DATA =====
+const GIT_DATA = [
+    {month:"Feb 25", merged:2436, created:2728},
+    {month:"Mar 25", merged:2714, created:3012},
+    {month:"Apr 25", merged:2254, created:2445},
+    {month:"May 25", merged:2514, created:2759},
+    {month:"Jun 25", merged:2417, created:2697},
+    {month:"Jul 25", merged:2519, created:2739},
+    {month:"Aug 25", merged:2156, created:2493},
+    {month:"Sep 25", merged:2230, created:2480},
+    {month:"Oct 25", merged:1499, created:1855},
+    {month:"Nov 25", merged:2633, created:3105},
+    {month:"Dec 25", merged:2004, created:2332},
+    {month:"Jan 26", merged:1723, created:1852},
+    {month:"Feb 26", merged:1687, created:1855},
+];
+
+// ===== CLAUDE DATA =====
+const CLAUDE_DATA = {
+    "Jul 25": {users: 9, output_tokens: 1102985, input_tokens: 165041895},
+    "Aug 25": {users: 20, output_tokens: 4735595, input_tokens: 864357450},
+    "Sep 25": {users: 16, output_tokens: 4706263, input_tokens: 904612257},
+    "Oct 25": {users: 18, output_tokens: 8141017, input_tokens: 1206146446},
+    "Nov 25": {users: 22, output_tokens: 12691060, input_tokens: 2002416591},
+    "Dec 25": {users: 20, output_tokens: 16329696, input_tokens: 2608096396},
+    "Jan 26": {users: 28, output_tokens: 12399277, input_tokens: 1896244119},
+    "Feb 26": {users: 30, output_tokens: 13814953, input_tokens: 1742400515},
+};
+
+// ===== CURSOR DATA =====
+const CURSOR_DATA = {
+    "Aug 25": {avg_dau: 19.7, max_dau: 45, agent_req: 863, chat_req: 41, composer_req: 16, total_req: 920, tab_accepts: 7, tab_suggestions: 41, ai_commits: 419, ai_lines_added: 9698, ai_lines_deleted: 4554, total_lines_added: 44162, total_lines_deleted: 13105, days: 4},
+    "Sep 25": {avg_dau: 37.7, max_dau: 68, agent_req: 12567, chat_req: 553, composer_req: 2771, total_req: 15891, tab_accepts: 34435, tab_suggestions: 116688, ai_commits: 3346, ai_lines_added: 134511, ai_lines_deleted: 45236, total_lines_added: 269916, total_lines_deleted: 149028, days: 30},
+    "Oct 25": {avg_dau: 28.8, max_dau: 64, agent_req: 7763, chat_req: 689, composer_req: 623, total_req: 9075, tab_accepts: 22824, tab_suggestions: 100909, ai_commits: 2388, ai_lines_added: 108076, ai_lines_deleted: 32913, total_lines_added: 246323, total_lines_deleted: 110980, days: 31},
+    "Nov 25": {avg_dau: 43.3, max_dau: 65, agent_req: 13888, chat_req: 711, composer_req: 1422, total_req: 16021, tab_accepts: 31858, tab_suggestions: 150221, ai_commits: 4126, ai_lines_added: 172702, ai_lines_deleted: 53397, total_lines_added: 409651, total_lines_deleted: 207091, days: 30},
+    "Dec 25": {avg_dau: 41.4, max_dau: 64, agent_req: 15438, chat_req: 1164, composer_req: 2156, total_req: 18758, tab_accepts: 33462, tab_suggestions: 149676, ai_commits: 3605, ai_lines_added: 212461, ai_lines_deleted: 48900, total_lines_added: 369389, total_lines_deleted: 167808, days: 31},
+    "Jan 26": {avg_dau: 40.4, max_dau: 66, agent_req: 16428, chat_req: 887, composer_req: 455, total_req: 17770, tab_accepts: 30951, tab_suggestions: 144580, ai_commits: 3957, ai_lines_added: 292154, ai_lines_deleted: 59252, total_lines_added: 453902, total_lines_deleted: 186958, days: 31},
+    "Feb 26": {avg_dau: 45.5, max_dau: 71, agent_req: 15868, chat_req: 32, composer_req: 46, total_req: 15946, tab_accepts: 26053, tab_suggestions: 120969, ai_commits: 4600, ai_lines_added: 455851, ai_lines_deleted: 144285, total_lines_added: 721795, total_lines_deleted: 294019, days: 28},
+};
+
+// ===== EXACT CODE VOLUME (from GitHub GraphQL - all merged PRs) =====
+const CODE_VOLUME = {
+    "Feb 25": {additions: 620283, deletions: 516001},
+    "Mar 25": {additions: 1093321, deletions: 983054},
+    "Apr 25": {additions: 904674, deletions: 846964},
+    "May 25": {additions: 1124293, deletions: 1276765},
+    "Jun 25": {additions: 1063981, deletions: 891055},
+    "Jul 25": {additions: 1881783, deletions: 961314},
+    "Aug 25": {additions: 1076183, deletions: 838786},
+    "Sep 25": {additions: 1122386, deletions: 628209},
+    "Oct 25": {additions: 559818, deletions: 682732},
+    "Nov 25": {additions: 2019940, deletions: 2031758},
+    "Dec 25": {additions: 1245524, deletions: 1277286},
+    "Jan 26": {additions: 999929, deletions: 588085},
+    "Feb 26": {additions: 1282278, deletions: 375184},
+};
+
+// ===== JIRA DATA (Feb 2025 - Feb 2026, issues created) =====
+const JIRA_DATA = {
+    "Feb 25": {total: 1679, stories: 219, epics: 61, tasks: 755, bugs: 218, others: 426, sp: 365, projects: 36},
+    "Mar 25": {total: 1740, stories: 256, epics: 98, tasks: 791, bugs: 153, others: 442, sp: 439, projects: 35},
+    "Apr 25": {total: 1629, stories: 275, epics: 37, tasks: 667, bugs: 183, others: 467, sp: 520, projects: 36},
+    "May 25": {total: 1733, stories: 183, epics: 89, tasks: 813, bugs: 110, others: 538, sp: 374, projects: 37},
+    "Jun 25": {total: 1671, stories: 183, epics: 86, tasks: 789, bugs: 141, others: 472, sp: 266, projects: 35},
+    "Jul 25": {total: 1232, stories: 252, epics: 68, tasks: 767, bugs: 145, others: 0, sp: 245, projects: 30},
+    "Aug 25": {total: 1618, stories: 210, epics: 82, tasks: 530, bugs: 115, others: 681, sp: 383, projects: 29},
+    "Sep 25": {total: 1392, stories: 227, epics: 33, tasks: 436, bugs: 76, others: 620, sp: 420, projects: 29},
+    "Oct 25": {total: 874, stories: 157, epics: 24, tasks: 226, bugs: 75, others: 392, sp: 278, projects: 25},
+    "Nov 25": {total: 1295, stories: 150, epics: 53, tasks: 433, bugs: 65, others: 594, sp: 331, projects: 25},
+    "Dec 25": {total: 1371, stories: 177, epics: 59, tasks: 366, bugs: 85, others: 684, sp: 559, projects: 27},
+    "Jan 26": {total: 1623, stories: 176, epics: 78, tasks: 702, bugs: 78, others: 589, sp: 1382, projects: 26},
+    "Feb 26": {total: 1583, stories: 197, epics: 70, tasks: 631, bugs: 79, others: 606, sp: 806, projects: 26},
+};
+
+const gitLabels = GIT_DATA.map(d => d.month);
+const claudeLabels = Object.keys(CLAUDE_DATA);
+const cursorLabels = Object.keys(CURSOR_DATA);
+
+const chartDefaults = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            labels: { color: '#9aa0a6', font: { size: 12 }, usePointStyle: true, pointStyle: 'circle' }
+        },
+        tooltip: {
+            backgroundColor: '#1a1d27',
+            titleColor: '#e8eaed',
+            bodyColor: '#9aa0a6',
+            borderColor: '#2d3148',
+            borderWidth: 1,
+            cornerRadius: 8,
+            padding: 12
+        }
+    },
+    scales: {
+        x: {
+            ticks: { color: '#9aa0a6', font: { size: 11 } },
+            grid: { color: 'rgba(45, 49, 72, 0.5)' }
+        },
+        y: {
+            ticks: { color: '#9aa0a6', font: { size: 11 } },
+            grid: { color: 'rgba(45, 49, 72, 0.5)' }
+        }
+    }
+};
+
+// --- KPI Cards ---
+const totalMerged = GIT_DATA.reduce((s, d) => s + d.merged, 0);
+const totalCreated = GIT_DATA.reduce((s, d) => s + d.created, 0);
+const claudeUsersFeb = CLAUDE_DATA["Feb 26"].users;
+const cursorMaxDau = CURSOR_DATA["Feb 26"].max_dau;
+const totalAiCommits = Object.values(CURSOR_DATA).reduce((s, d) => s + d.ai_commits, 0);
+const totalAiRequests = Object.values(CURSOR_DATA).reduce((s, d) => s + d.total_req, 0);
+const totalAdditions = Object.values(CODE_VOLUME).reduce((s, d) => s + d.additions, 0);
+const totalDeletions = Object.values(CODE_VOLUME).reduce((s, d) => s + d.deletions, 0);
+const netLines = totalAdditions - totalDeletions;
+
+const kpis = [
+    { value: '377', label: 'Active Repositories', change: 'GitHub (lusha-com)', type: 'neutral' },
+    { value: '12,549', label: 'BugBot Issues Found', change: '4,774 PRs reviewed', type: 'neutral' },
+    { value: '59.9%', label: 'BugBot Issues Resolved', change: 'Oct 25 - Feb 26', type: 'positive' },
+    { value: totalCreated.toLocaleString(), label: 'Total PRs Created (13mo)', change: 'GitHub', type: 'neutral' },
+    { value: claudeUsersFeb, label: 'Claude Users (Feb 26)', change: 'Was 9 in Jul 25', type: 'positive' },
+    { value: '97', label: 'Cursor Users', change: 'Aug 25 - Feb 26', type: 'positive' },
+    { value: totalAiCommits.toLocaleString(), label: 'Total AI Commits (Cursor)', change: 'Sep 25 - Feb 26', type: 'neutral' },
+    { value: `${(totalAdditions / 1000000).toFixed(1)}M`, label: 'Total Lines Added (13mo)', change: `${(netLines / 1000000).toFixed(1)}M net growth`, type: 'positive' },
+    { value: (Object.values(JIRA_DATA).reduce((s,d)=>s+d.total,0)/1000).toFixed(1)+'K', label: 'Jira Issues Created (13mo)', change: 'Feb 25 - Feb 26', type: 'neutral' },
+    { value: (Object.values(JIRA_DATA).reduce((s,d)=>s+d.sp,0)/1000).toFixed(1)+'K', label: 'Jira Story Points (13mo)', change: 'Feb 25 - Feb 26', type: 'neutral' },
+];
+
+const kpiGrid = document.getElementById('kpiGrid');
+kpis.forEach(k => {
+    kpiGrid.innerHTML += `
+        <div class="kpi-card">
+            <div class="kpi-value">${k.value}</div>
+            <div class="kpi-label">${k.label}</div>
+            <div class="kpi-change ${k.type}">${k.change}</div>
+        </div>`;
+});
+
+const badges = [
+    '&#x1F9E0; Claude: 9 &rarr; 30 users',
+    '&#x1F4BB; 97 Cursor Users',
+    '&#x1F916; AI Commits: 419 &rarr; 4,600/mo',
+    '&#x26A1; AI Requests: 920 &rarr; 15,946/mo',
+    '&#x1F4DD; AI Lines Added: 9.7K &rarr; 456K/mo',
+];
+const badgesEl = document.getElementById('insightBadges');
+badges.forEach(b => { badgesEl.innerHTML += `<span class="insight-badge">${b}</span>`; });
+
+// ===== CHARTS =====
+
+// 1. Claude Active Users
+new Chart(document.getElementById('claudeUsersChart'), {
+    type: 'bar',
+    data: {
+        labels: claudeLabels,
+        datasets: [{
+            label: 'Active Users',
+            data: claudeLabels.map(m => CLAUDE_DATA[m].users),
+            backgroundColor: 'rgba(251, 146, 60, 0.6)',
+            borderColor: '#fb923c',
+            borderWidth: 1,
+            borderRadius: 6
+        }]
+    },
+    options: {
+        ...chartDefaults,
+        plugins: { ...chartDefaults.plugins, legend: { display: false } },
+        scales: {
+            ...chartDefaults.scales,
+            y: { ...chartDefaults.scales.y, beginAtZero: true, title: { display: true, text: 'Users', color: '#9aa0a6' } }
+        }
+    }
+});
+
+// 2. Claude Output Tokens
+new Chart(document.getElementById('claudeTokensChart'), {
+    type: 'line',
+    data: {
+        labels: claudeLabels,
+        datasets: [{
+            label: 'Output Tokens',
+            data: claudeLabels.map(m => Math.round(CLAUDE_DATA[m].output_tokens / 1000000 * 100) / 100),
+            borderColor: '#fb923c',
+            backgroundColor: 'rgba(251, 146, 60, 0.15)',
+            fill: true,
+            tension: 0.4,
+            borderWidth: 3,
+            pointRadius: 6,
+            pointBackgroundColor: '#fb923c'
+        }]
+    },
+    options: {
+        ...chartDefaults,
+        scales: {
+            ...chartDefaults.scales,
+            y: { ...chartDefaults.scales.y, beginAtZero: true, title: { display: true, text: 'Millions of tokens', color: '#9aa0a6' } }
+        }
+    }
+});
+
+// 3. Cursor DAU
+new Chart(document.getElementById('cursorDauChart'), {
+    type: 'bar',
+    data: {
+        labels: cursorLabels,
+        datasets: [
+            {
+                label: 'Avg DAU',
+                data: cursorLabels.map(m => CURSOR_DATA[m].avg_dau),
+                backgroundColor: 'rgba(167, 139, 250, 0.6)',
+                borderColor: '#a78bfa',
+                borderWidth: 1,
+                borderRadius: 6
+            },
+            {
+                label: 'Max DAU',
+                data: cursorLabels.map(m => CURSOR_DATA[m].max_dau),
+                backgroundColor: 'rgba(167, 139, 250, 0.25)',
+                borderColor: '#a78bfa',
+                borderWidth: 1,
+                borderRadius: 6,
+                borderDash: [5, 5]
+            }
+        ]
+    },
+    options: {
+        ...chartDefaults,
+        scales: {
+            ...chartDefaults.scales,
+            y: { ...chartDefaults.scales.y, beginAtZero: true, title: { display: true, text: 'Users', color: '#9aa0a6' } }
+        }
+    }
+});
+
+// 4. Cursor AI Requests (Total)
+new Chart(document.getElementById('cursorRequestsChart'), {
+    type: 'bar',
+    data: {
+        labels: cursorLabels,
+        datasets: [{
+            label: 'Total AI Requests',
+            data: cursorLabels.map(m => CURSOR_DATA[m].total_req),
+            backgroundColor: cursorLabels.map((m, i) => {
+                const opacity = 0.4 + (i / cursorLabels.length) * 0.4;
+                return `rgba(167, 139, 250, ${opacity})`;
+            }),
+            borderColor: '#a78bfa',
+            borderWidth: 1,
+            borderRadius: 6
+        }]
+    },
+    options: {
+        ...chartDefaults,
+        plugins: { ...chartDefaults.plugins, legend: { display: false } },
+        scales: {
+            ...chartDefaults.scales,
+            y: { ...chartDefaults.scales.y, beginAtZero: true, title: { display: true, text: 'Total Requests', color: '#9aa0a6' } }
+        }
+    }
+});
+
+// 5. AI Commits
+new Chart(document.getElementById('aiCommitsChart'), {
+    type: 'bar',
+    data: {
+        labels: cursorLabels,
+        datasets: [{
+            label: 'AI Commits',
+            data: cursorLabels.map(m => CURSOR_DATA[m].ai_commits),
+            backgroundColor: cursorLabels.map((m, i) => {
+                const opacity = 0.4 + (i / cursorLabels.length) * 0.4;
+                return `rgba(167, 139, 250, ${opacity})`;
+            }),
+            borderColor: '#a78bfa',
+            borderWidth: 1,
+            borderRadius: 6
+        }]
+    },
+    options: {
+        ...chartDefaults,
+        plugins: { ...chartDefaults.plugins, legend: { display: false } },
+        scales: {
+            ...chartDefaults.scales,
+            y: { ...chartDefaults.scales.y, beginAtZero: true, title: { display: true, text: 'Commits', color: '#9aa0a6' } }
+        }
+    }
+});
+
+// 6. Tab Accepts vs Suggestions
+new Chart(document.getElementById('tabChart'), {
+    type: 'bar',
+    data: {
+        labels: cursorLabels,
+        datasets: [
+            {
+                label: 'Accepted',
+                data: cursorLabels.map(m => CURSOR_DATA[m].tab_accepts),
+                backgroundColor: 'rgba(52, 211, 153, 0.6)',
+                borderColor: '#34d399',
+                borderWidth: 1,
+                borderRadius: 4
+            },
+            {
+                label: 'Suggested',
+                data: cursorLabels.map(m => CURSOR_DATA[m].tab_suggestions),
+                backgroundColor: 'rgba(154, 160, 166, 0.3)',
+                borderColor: '#9aa0a6',
+                borderWidth: 1,
+                borderRadius: 4
+            }
+        ]
+    },
+    options: {
+        ...chartDefaults,
+        scales: {
+            ...chartDefaults.scales,
+            y: { ...chartDefaults.scales.y, title: { display: true, text: 'Count', color: '#9aa0a6' } }
+        }
+    }
+});
+
+// 7. AI Lines vs Total Lines
+new Chart(document.getElementById('aiLinesChart'), {
+    type: 'bar',
+    data: {
+        labels: cursorLabels,
+        datasets: [
+            {
+                label: 'AI Lines Added',
+                data: cursorLabels.map(m => Math.round(CURSOR_DATA[m].ai_lines_added / 1000)),
+                backgroundColor: 'rgba(167, 139, 250, 0.7)',
+                borderColor: '#a78bfa',
+                borderWidth: 1,
+                borderRadius: 4
+            },
+            {
+                label: 'Total Lines Added (via Cursor)',
+                data: cursorLabels.map(m => Math.round(CURSOR_DATA[m].total_lines_added / 1000)),
+                backgroundColor: 'rgba(74, 158, 255, 0.3)',
+                borderColor: '#4a9eff',
+                borderWidth: 1,
+                borderRadius: 4
+            }
+        ]
+    },
+    options: {
+        ...chartDefaults,
+        scales: {
+            ...chartDefaults.scales,
+            y: { ...chartDefaults.scales.y, title: { display: true, text: 'Lines (thousands)', color: '#9aa0a6' } }
+        }
+    }
+});
+
+// 8. Jira Issues by Type
+const jiraLabels = Object.keys(JIRA_DATA);
+new Chart(document.getElementById('jiraIssuesChart'), {
+    type: 'bar',
+    data: {
+        labels: jiraLabels,
+        datasets: [
+            {
+                label: 'Stories',
+                data: jiraLabels.map(m => JIRA_DATA[m].stories),
+                backgroundColor: 'rgba(167, 139, 250, 0.7)',
+                borderRadius: 4
+            },
+            {
+                label: 'Tasks',
+                data: jiraLabels.map(m => JIRA_DATA[m].tasks),
+                backgroundColor: 'rgba(74, 158, 255, 0.7)',
+                borderRadius: 4
+            },
+            {
+                label: 'Bugs',
+                data: jiraLabels.map(m => JIRA_DATA[m].bugs),
+                backgroundColor: 'rgba(248, 113, 113, 0.7)',
+                borderRadius: 4
+            },
+            {
+                label: 'Epics',
+                data: jiraLabels.map(m => JIRA_DATA[m].epics),
+                backgroundColor: 'rgba(52, 211, 153, 0.7)',
+                borderRadius: 4
+            },
+            {
+                label: 'Others',
+                data: jiraLabels.map(m => JIRA_DATA[m].others),
+                backgroundColor: 'rgba(156, 163, 175, 0.5)',
+                borderRadius: 4
+            }
+        ]
+    },
+    options: {
+        ...chartDefaults,
+        scales: {
+            ...chartDefaults.scales,
+            x: { ...chartDefaults.scales.x, stacked: true },
+            y: { ...chartDefaults.scales.y, stacked: true, title: { display: true, text: 'Issues Created', color: '#9aa0a6' } }
+        }
+    }
+});
+
+// 9. Jira Story Points
+new Chart(document.getElementById('jiraStoryPointsChart'), {
+    type: 'bar',
+    data: {
+        labels: jiraLabels,
+        datasets: [{
+            label: 'Story Points',
+            data: jiraLabels.map(m => JIRA_DATA[m].sp),
+            backgroundColor: jiraLabels.map((m, i) => {
+                const opacity = 0.4 + (i / jiraLabels.length) * 0.4;
+                return `rgba(251, 191, 36, ${opacity})`;
+            }),
+            borderColor: '#fbbf24',
+            borderWidth: 1,
+            borderRadius: 6
+        }]
+    },
+    options: {
+        ...chartDefaults,
+        plugins: { ...chartDefaults.plugins, legend: { display: false } },
+        scales: {
+            ...chartDefaults.scales,
+            y: { ...chartDefaults.scales.y, beginAtZero: true, title: { display: true, text: 'Story Points', color: '#9aa0a6' } }
+        }
+    }
+});
+
+// 10. BugBot Issues Trend
+const BUGBOT_DATA = {
+    "Oct 25": 1347,
+    "Nov 25": 2111,
+    "Dec 25": 3201,
+    "Jan 26": 3087,
+    "Feb 26": 2803
+};
+const bugbotLabels = Object.keys(BUGBOT_DATA);
+new Chart(document.getElementById('bugbotTrendChart'), {
+    type: 'bar',
+    data: {
+        labels: bugbotLabels,
+        datasets: [{
+            label: 'Issues Found',
+            data: bugbotLabels.map(m => BUGBOT_DATA[m]),
+            backgroundColor: bugbotLabels.map((m, i) => {
+                const opacity = 0.4 + (i / bugbotLabels.length) * 0.4;
+                return `rgba(139, 92, 246, ${opacity})`;
+            }),
+            borderColor: '#8b5cf6',
+            borderWidth: 1,
+            borderRadius: 6
+        }]
+    },
+    options: {
+        ...chartDefaults,
+        plugins: { ...chartDefaults.plugins, legend: { display: false } },
+        scales: {
+            ...chartDefaults.scales,
+            y: { ...chartDefaults.scales.y, beginAtZero: true, title: { display: true, text: 'Issues Found', color: '#9aa0a6' } }
+        }
+    }
+});
+
+// 11. PRs Merged
+new Chart(document.getElementById('prsMergedChart'), {
+    type: 'bar',
+    data: {
+        labels: gitLabels,
+        datasets: [{
+            label: 'PRs Merged',
+            data: GIT_DATA.map(d => d.merged),
+            backgroundColor: 'rgba(74, 158, 255, 0.6)',
+            borderColor: '#4a9eff',
+            borderWidth: 1,
+            borderRadius: 6
+        }]
+    },
+    options: {
+        ...chartDefaults,
+        plugins: { ...chartDefaults.plugins, legend: { display: false } },
+        scales: {
+            ...chartDefaults.scales,
+            y: { ...chartDefaults.scales.y, beginAtZero: false, suggestedMin: 1000 }
+        }
+    }
+});
+
+// 11. PRs Created
+new Chart(document.getElementById('prsCreatedChart'), {
+    type: 'bar',
+    data: {
+        labels: gitLabels,
+        datasets: [{
+            label: 'PRs Created',
+            data: GIT_DATA.map(d => d.created),
+            backgroundColor: 'rgba(52, 211, 153, 0.6)',
+            borderColor: '#34d399',
+            borderWidth: 1,
+            borderRadius: 6
+        }]
+    },
+    options: {
+        ...chartDefaults,
+        plugins: { ...chartDefaults.plugins, legend: { display: false } },
+        scales: {
+            ...chartDefaults.scales,
+            y: { ...chartDefaults.scales.y, beginAtZero: false, suggestedMin: 1000 }
+        }
+    }
+});
+
+// 10. Code Volume (Exact)
+new Chart(document.getElementById('codeVolumeChart'), {
+    type: 'bar',
+    data: {
+        labels: gitLabels,
+        datasets: [
+            {
+                label: 'Additions',
+                data: gitLabels.map(m => Math.round((CODE_VOLUME[m]?.additions || 0) / 1000)),
+                backgroundColor: 'rgba(52, 211, 153, 0.6)',
+                borderColor: '#34d399',
+                borderWidth: 1,
+                borderRadius: 4
+            },
+            {
+                label: 'Deletions',
+                data: gitLabels.map(m => Math.round((CODE_VOLUME[m]?.deletions || 0) / 1000)),
+                backgroundColor: 'rgba(248, 113, 113, 0.6)',
+                borderColor: '#f87171',
+                borderWidth: 1,
+                borderRadius: 4
+            },
+            {
+                label: 'Net (Additions - Deletions)',
+                data: gitLabels.map(m => Math.round(((CODE_VOLUME[m]?.additions || 0) - (CODE_VOLUME[m]?.deletions || 0)) / 1000)),
+                type: 'line',
+                borderColor: '#4a9eff',
+                backgroundColor: 'transparent',
+                borderWidth: 2,
+                pointRadius: 4,
+                pointBackgroundColor: '#4a9eff',
+                tension: 0.3
+            }
+        ]
+    },
+    options: {
+        ...chartDefaults,
+        scales: {
+            ...chartDefaults.scales,
+            y: { ...chartDefaults.scales.y, title: { display: true, text: 'Lines (thousands)', color: '#9aa0a6' } }
+        }
+    }
+});
+</script>
+
+</body>
+</html>
