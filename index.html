@@ -378,6 +378,10 @@
                 <h3>Lines Added vs Deleted Per Month (All Merged PRs)</h3>
                 <div class="chart-container tall"><canvas id="codeVolumeChart"></canvas></div>
             </div>
+            <div class="chart-card full-width">
+                <h3>AI-Generated Code vs Total New Code</h3>
+                <div class="chart-container tall"><canvas id="aiCodeShareChart"></canvas></div>
+            </div>
         </div>
     </div>
 
@@ -987,6 +991,72 @@ new Chart(document.getElementById('codeVolumeChart'), {
         scales: {
             ...chartDefaults.scales,
             y: { ...chartDefaults.scales.y, title: { display: true, text: 'Lines (thousands)', color: '#9aa0a6' } }
+        }
+    }
+});
+
+// 11. AI-Generated Code vs Total New Code
+const CLAUDE_CODE = {};
+new Chart(document.getElementById('aiCodeShareChart'), {
+    type: 'bar',
+    data: {
+        labels: gitLabels,
+        datasets: [
+            {
+                label: 'Total Lines Added (Git)',
+                data: gitLabels.map(m => Math.round((CODE_VOLUME[m]?.additions || 0) / 1000)),
+                backgroundColor: 'rgba(154, 160, 166, 0.25)',
+                borderColor: 'rgba(154, 160, 166, 0.5)',
+                borderWidth: 1,
+                borderRadius: 4,
+                order: 3
+            },
+            {
+                label: 'Cursor AI Lines',
+                data: gitLabels.map(m => Math.round((CURSOR_DATA[m]?.ai_lines_added || 0) / 1000)),
+                backgroundColor: 'rgba(167, 139, 250, 0.7)',
+                borderColor: '#a78bfa',
+                borderWidth: 1,
+                borderRadius: 4,
+                stack: 'ai',
+                order: 2
+            },
+            {
+                label: 'Claude AI Lines',
+                data: gitLabels.map(m => Math.round((CLAUDE_CODE[m] || 0) / 1000)),
+                backgroundColor: 'rgba(251, 146, 60, 0.7)',
+                borderColor: '#fb923c',
+                borderWidth: 1,
+                borderRadius: 4,
+                stack: 'ai',
+                order: 1
+            }
+        ]
+    },
+    options: {
+        ...chartDefaults,
+        scales: {
+            ...chartDefaults.scales,
+            y: { ...chartDefaults.scales.y, beginAtZero: true, title: { display: true, text: 'Lines (thousands)', color: '#9aa0a6' } }
+        },
+        plugins: {
+            ...chartDefaults.plugins,
+            tooltip: {
+                ...chartDefaults.plugins.tooltip,
+                callbacks: {
+                    afterBody: function(items) {
+                        const idx = items[0].dataIndex;
+                        const total = Math.round((CODE_VOLUME[gitLabels[idx]]?.additions || 0) / 1000);
+                        const cursor = Math.round((CURSOR_DATA[gitLabels[idx]]?.ai_lines_added || 0) / 1000);
+                        const claude = Math.round((CLAUDE_CODE[gitLabels[idx]] || 0) / 1000);
+                        const aiTotal = cursor + claude;
+                        if (total > 0 && aiTotal > 0) {
+                            return `\nAI Share: ${((aiTotal / total) * 100).toFixed(1)}%`;
+                        }
+                        return '';
+                    }
+                }
+            }
         }
     }
 });
