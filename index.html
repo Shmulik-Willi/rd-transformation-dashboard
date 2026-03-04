@@ -259,21 +259,6 @@
         <div class="insights-row" id="insightBadges"></div>
     </div>
 
-    <!-- Section 0: AI Tool Adoption -->
-    <div class="section">
-        <div class="section-title">
-            <span class="icon" style="background: rgba(74, 158, 255, 0.2);">&#x1F504;</span>
-            AI Tool Adoption in PRs
-            <span class="data-source-tag tag-git">GitHub</span>
-        </div>
-        <div class="chart-grid">
-            <div class="chart-card full-width">
-                <h3>AI Tool Mentions in Pull Requests (Copilot vs Cursor)</h3>
-                <div class="chart-container"><canvas id="aiAdoptionChart"></canvas></div>
-            </div>
-        </div>
-    </div>
-
     <!-- Section 1: Claude Usage -->
     <div class="section">
         <div class="section-title">
@@ -839,61 +824,6 @@ new Chart(document.getElementById('jiraStoryPointsChart'), {
         scales: {
             ...chartDefaults.scales,
             y: { ...chartDefaults.scales.y, beginAtZero: true, title: { display: true, text: 'Story Points', color: '#9aa0a6' } }
-        }
-    }
-});
-
-// 9b. AI Tool Adoption (Copilot vs Cursor PR mentions)
-const AI_MENTIONS = {
-    "Feb 25": {copilot: 42, cursor: 2},
-    "Mar 25": {copilot: 715, cursor: 4},
-    "Apr 25": {copilot: 600, cursor: 11},
-    "May 25": {copilot: 302, cursor: 10},
-    "Jun 25": {copilot: 250, cursor: 39},
-    "Jul 25": {copilot: 167, cursor: 1009},
-    "Aug 25": {copilot: 143, cursor: 730},
-    "Sep 25": {copilot: 240, cursor: 887},
-    "Oct 25": {copilot: 233, cursor: 1671},
-    "Nov 25": {copilot: 241, cursor: 2696},
-    "Dec 25": {copilot: 173, cursor: 2028},
-    "Jan 26": {copilot: 80, cursor: 1770},
-    "Feb 26": {copilot: 0, cursor: 1737},
-};
-const mentionLabels = Object.keys(AI_MENTIONS);
-new Chart(document.getElementById('aiAdoptionChart'), {
-    type: 'line',
-    data: {
-        labels: mentionLabels,
-        datasets: [
-            {
-                label: 'Cursor Mentions',
-                data: mentionLabels.map(m => AI_MENTIONS[m].cursor),
-                borderColor: '#a78bfa',
-                backgroundColor: 'rgba(167, 139, 250, 0.15)',
-                fill: true,
-                tension: 0.4,
-                borderWidth: 3,
-                pointRadius: 5,
-                pointBackgroundColor: '#a78bfa'
-            },
-            {
-                label: 'Copilot Mentions',
-                data: mentionLabels.map(m => AI_MENTIONS[m].copilot),
-                borderColor: '#f87171',
-                backgroundColor: 'rgba(248, 113, 113, 0.1)',
-                fill: true,
-                tension: 0.4,
-                borderWidth: 3,
-                pointRadius: 5,
-                pointBackgroundColor: '#f87171'
-            }
-        ]
-    },
-    options: {
-        ...chartDefaults,
-        scales: {
-            ...chartDefaults.scales,
-            y: { ...chartDefaults.scales.y, beginAtZero: true, title: { display: true, text: 'PRs Mentioning Tool', color: '#9aa0a6' } }
         }
     }
 });
