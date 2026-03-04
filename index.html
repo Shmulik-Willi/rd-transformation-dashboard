@@ -386,6 +386,30 @@
         </div>
     </div>
 
+    <!-- Section: Developer AI Adoption Depth -->
+    <div class="section">
+        <div class="section-title">
+            <span class="icon" style="background: rgba(34, 211, 238, 0.2);">&#x1F465;</span>
+            Developer AI Adoption Depth
+            <span class="data-source-tag tag-cursor">Cursor</span>
+            <span class="data-source-tag tag-claude">Claude</span>
+        </div>
+        <div class="chart-grid">
+            <div class="chart-card">
+                <h3>Cursor Adoption Tiers (by Total Requests)</h3>
+                <div class="chart-container"><canvas id="cursorTiersChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3>Claude Adoption Tiers (by Output Tokens)</h3>
+                <div class="chart-container"><canvas id="claudeTiersChart"></canvas></div>
+            </div>
+            <div class="chart-card full-width">
+                <h3>Average AI Usage Per Developer (Normalized Growth)</h3>
+                <div class="chart-container tall"><canvas id="avgUsageGrowthChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <div class="footer">
@@ -1064,6 +1088,144 @@ new Chart(document.getElementById('aiCodeShareChart'), {
                             return `\nAI Share: ${((aiTotal / total) * 100).toFixed(1)}%`;
                         }
                         return '';
+                    }
+                }
+            }
+        }
+    }
+});
+
+// === Developer AI Adoption Depth ===
+
+// Cursor Adoption Tiers
+new Chart(document.getElementById('cursorTiersChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Heavy (500+)', 'Medium (100-499)', 'Light (10-99)', 'Minimal (<10)'],
+        datasets: [{
+            data: [68, 41, 23, 7],
+            backgroundColor: ['#a78bfa', 'rgba(167, 139, 250, 0.55)', 'rgba(167, 139, 250, 0.3)', 'rgba(167, 139, 250, 0.12)'],
+            borderColor: '#1a1d27',
+            borderWidth: 3
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '55%',
+        plugins: {
+            legend: {
+                position: 'right',
+                labels: { color: '#9aa0a6', font: { size: 12 }, padding: 14, usePointStyle: true, pointStyle: 'circle' }
+            },
+            tooltip: {
+                ...chartDefaults.plugins.tooltip,
+                callbacks: {
+                    label: function(ctx) {
+                        const pct = ((ctx.raw / 139) * 100).toFixed(0);
+                        return `${ctx.label}: ${ctx.raw} devs (${pct}%)`;
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Claude Adoption Tiers
+new Chart(document.getElementById('claudeTiersChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Heavy (5M+)', 'Medium (1M-5M)', 'Light (100K-1M)', 'Minimal (<100K)'],
+        datasets: [{
+            data: [5, 11, 18, 20],
+            backgroundColor: ['#fb923c', 'rgba(251, 146, 60, 0.55)', 'rgba(251, 146, 60, 0.3)', 'rgba(251, 146, 60, 0.12)'],
+            borderColor: '#1a1d27',
+            borderWidth: 3
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '55%',
+        plugins: {
+            legend: {
+                position: 'right',
+                labels: { color: '#9aa0a6', font: { size: 12 }, padding: 14, usePointStyle: true, pointStyle: 'circle' }
+            },
+            tooltip: {
+                ...chartDefaults.plugins.tooltip,
+                callbacks: {
+                    label: function(ctx) {
+                        const pct = ((ctx.raw / 54) * 100).toFixed(0);
+                        return `${ctx.label}: ${ctx.raw} devs (${pct}%)`;
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Average Usage Per Developer - Normalized Growth (Jul 25 = 100%)
+const growthLabels = ['Jul 25', 'Aug 25', 'Sep 25', 'Oct 25', 'Nov 25', 'Dec 25', 'Jan 26', 'Feb 26'];
+const cursorAvg = [153.3, 125.4, 165.7, 144.0, 173.7, 250.8, 245.3, 237.6];
+const claudeAvg = [0.138, 0.237, 0.294, 0.452, 0.577, 0.859, 0.459, 0.460];
+const cursorBase = cursorAvg[0];
+const claudeBase = claudeAvg[0];
+new Chart(document.getElementById('avgUsageGrowthChart'), {
+    type: 'line',
+    data: {
+        labels: growthLabels,
+        datasets: [
+            {
+                label: 'Cursor (avg requests/dev)',
+                data: cursorAvg.map(v => Math.round((v / cursorBase) * 100)),
+                borderColor: '#a78bfa',
+                backgroundColor: 'rgba(167, 139, 250, 0.1)',
+                fill: true,
+                tension: 0.4,
+                borderWidth: 3,
+                pointRadius: 6,
+                pointBackgroundColor: '#a78bfa'
+            },
+            {
+                label: 'Claude (avg output tokens/dev)',
+                data: claudeAvg.map(v => Math.round((v / claudeBase) * 100)),
+                borderColor: '#fb923c',
+                backgroundColor: 'rgba(251, 146, 60, 0.1)',
+                fill: true,
+                tension: 0.4,
+                borderWidth: 3,
+                pointRadius: 6,
+                pointBackgroundColor: '#fb923c'
+            }
+        ]
+    },
+    options: {
+        ...chartDefaults,
+        scales: {
+            ...chartDefaults.scales,
+            y: {
+                ...chartDefaults.scales.y,
+                beginAtZero: false,
+                title: { display: true, text: '% of Baseline (Jul 25 = 100%)', color: '#9aa0a6' },
+                ticks: {
+                    ...chartDefaults.scales.y.ticks,
+                    callback: function(val) { return val + '%'; }
+                }
+            }
+        },
+        plugins: {
+            ...chartDefaults.plugins,
+            tooltip: {
+                ...chartDefaults.plugins.tooltip,
+                callbacks: {
+                    label: function(ctx) {
+                        const idx = ctx.dataIndex;
+                        if (ctx.datasetIndex === 0) {
+                            return `Cursor: ${ctx.raw}% (${cursorAvg[idx].toFixed(0)} req/dev)`;
+                        } else {
+                            return `Claude: ${ctx.raw}% (${(claudeAvg[idx]*1000).toFixed(0)}K tokens/dev)`;
+                        }
                     }
                 }
             }
