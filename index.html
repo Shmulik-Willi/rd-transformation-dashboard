@@ -404,8 +404,8 @@
                 <div class="chart-container"><canvas id="claudeTiersChart"></canvas></div>
             </div>
             <div class="chart-card full-width">
-                <h3>Average AI Usage Per Developer (Normalized Growth)</h3>
-                <div class="chart-container tall"><canvas id="avgUsageGrowthChart"></canvas></div>
+                <h3>Developer AI Adoption Map (each dot = 1 developer)</h3>
+                <div class="chart-container tall"><canvas id="devScatterChart"></canvas></div>
             </div>
         </div>
     </div>
@@ -1165,53 +1165,118 @@ new Chart(document.getElementById('claudeTiersChart'), {
     }
 });
 
-// Average Usage Per Developer - Normalized Growth (Jul 25 = 100%)
-const growthLabels = ['Jul 25', 'Aug 25', 'Sep 25', 'Oct 25', 'Nov 25', 'Dec 25', 'Jan 26', 'Feb 26'];
-const cursorAvg = [153.3, 125.4, 165.7, 144.0, 173.7, 250.8, 245.3, 237.6];
-const claudeAvg = [0.138, 0.237, 0.294, 0.452, 0.577, 0.859, 0.459, 0.460];
-const cursorBase = cursorAvg[0];
-const claudeBase = claudeAvg[0];
-new Chart(document.getElementById('avgUsageGrowthChart'), {
-    type: 'line',
+// Developer AI Adoption Scatter
+const DEV_DATA = [
+    {x:8377,y:0.39,l:"Dor Rokah"},{x:7865,y:0,l:"Ariel Cohen"},{x:4394,y:0.08,l:"Yahav Vanunu"},
+    {x:4258,y:0,l:"Yonatan Kupeev"},{x:4089,y:0,l:"Eli Lifshitz"},{x:3881,y:0,l:"Omer Adam"},
+    {x:3672,y:0,l:"Itzik Shabtay"},{x:3635,y:0,l:"Moran Turgeman"},{x:3613,y:0,l:"Amit Shimon"},
+    {x:3002,y:0,l:"Yehuda Finkelstein"},{x:2893,y:0,l:"Sefi Piscon"},{x:2860,y:0.03,l:"Oriel Perl"},
+    {x:2665,y:0,l:"Adar Pascal"},{x:2633,y:0.11,l:"Michael Babushkin"},{x:2563,y:1.17,l:"Aviv Shafir"},
+    {x:2538,y:0,l:"Oleh Buhaienko"},{x:2038,y:0,l:"Oleksii Pavlov"},{x:2005,y:6.94,l:"Malka Gloiberman"},
+    {x:1955,y:0,l:"Shay Beer"},{x:1725,y:1.07,l:"Royi Iluz"},{x:1706,y:1.91,l:"Shir Avraham"},
+    {x:1704,y:0,l:"Ori Benezra"},{x:1700,y:0,l:"Tomer L"},{x:1660,y:0.24,l:"Or Kiraly"},
+    {x:1606,y:0,l:"Nir Vashdi"},{x:1571,y:0,l:"Daniel Arama"},{x:1526,y:0.15,l:"Shahar Michaeli"},
+    {x:1518,y:0,l:"Alex Goyerberg"},{x:1505,y:0,l:"Nahum Landau"},{x:1498,y:0,l:"Itamar"},
+    {x:1495,y:0,l:"Stas Obydionnov"},{x:1413,y:0,l:"Aviv Gabay"},{x:1373,y:0.08,l:"Gal Levy"},
+    {x:1367,y:4.38,l:"Shir Merav"},{x:1325,y:0,l:""},{x:1316,y:0,l:"Maksym Malikov"},
+    {x:1308,y:1.08,l:"Shmulik Willinger"},{x:1230,y:0.49,l:"Ruth Miller"},
+    {x:1055,y:0,l:""},{x:1040,y:0,l:"Adam Soffer"},{x:1036,y:0.23,l:"Maor Iancu"},
+    {x:1034,y:0,l:"Oz Bar-Lev"},{x:1016,y:0.56,l:"Nathaniel Maymon"},
+    {x:987,y:0,l:"Roy Eyal"},{x:983,y:0,l:"Ihor Stoianov"},
+    {x:898,y:0,l:""},{x:867,y:0.91,l:"Noa Kolodro"},{x:855,y:0.47,l:"Idan Avrahami"},
+    {x:819,y:0.96,l:"Lilach Birnbaum"},{x:736,y:1.02,l:"Stav Rozenfeld"},
+    {x:672,y:0,l:""},{x:643,y:0,l:""},{x:618,y:0,l:""},{x:614,y:0,l:""},
+    {x:609,y:0,l:""},{x:600,y:0,l:""},{x:596,y:0,l:""},{x:589,y:0,l:""},
+    {x:573,y:0,l:""},{x:565,y:0,l:""},{x:538,y:0,l:""},{x:505,y:0,l:""},
+    {x:490,y:0,l:""},{x:463,y:0,l:""},{x:457,y:0,l:""},{x:437,y:0,l:""},
+    {x:420,y:4.12,l:"Mali Gedalovich"},{x:377,y:0,l:""},{x:372,y:0.07,l:""},
+    {x:356,y:0,l:""},{x:354,y:0,l:""},{x:350,y:0,l:""},{x:349,y:0,l:""},
+    {x:334,y:0,l:""},{x:331,y:0,l:""},{x:311,y:0,l:""},{x:300,y:0,l:""},
+    {x:296,y:0.14,l:""},{x:272,y:0,l:""},{x:268,y:0,l:""},{x:265,y:0,l:""},
+    {x:263,y:0,l:""},{x:262,y:0,l:""},{x:256,y:0,l:""},{x:253,y:0,l:""},
+    {x:245,y:0,l:""},{x:234,y:0,l:""},{x:220,y:0,l:""},{x:216,y:0,l:""},
+    {x:211,y:0,l:""},{x:210,y:0,l:""},{x:190,y:1.69,l:"Samuel Regev"},
+    {x:186,y:0,l:""},{x:167,y:0,l:""},{x:166,y:0,l:""},{x:124,y:0,l:""},
+    {x:118,y:0,l:""},{x:115,y:12.03,l:"Yonatan Benisty"},{x:105,y:0,l:""},
+    {x:99,y:0,l:""},{x:96,y:0,l:""},{x:91,y:0,l:""},{x:80,y:0,l:""},
+    {x:75,y:0,l:""},{x:74,y:0,l:""},{x:71,y:0,l:""},{x:68,y:0,l:""},
+    {x:64,y:0,l:""},{x:62,y:0.09,l:""},{x:62,y:0,l:""},{x:59,y:0,l:""},
+    {x:53,y:0,l:""},{x:35,y:0,l:""},{x:30,y:0,l:""},{x:29,y:0,l:""},
+    {x:26,y:0,l:""},{x:25,y:0,l:""},{x:21,y:0,l:""},{x:15,y:0,l:""},
+    {x:12,y:0,l:""},{x:11,y:0,l:""},{x:5,y:0,l:""},{x:4,y:0,l:""},
+    {x:3,y:0,l:""},{x:2,y:0,l:""},
+    {x:0,y:10.36,l:"Noam"},{x:0,y:7.69,l:"Naama Czitron"},{x:0,y:6.8,l:"Gal Ezra"},
+    {x:0,y:2.18,l:"Lior Itzkovich"},{x:0,y:2.04,l:"Roi Horowitz"},
+    {x:0,y:1.22,l:"Alexander Milikovski"},{x:0,y:0.97,l:"Omer Levy"},
+    {x:0,y:0.93,l:"Omer Zamir"},{x:0,y:0.45,l:"Ben H"},
+    {x:0,y:0.26,l:""},{x:0,y:0.17,l:""},{x:0,y:0.16,l:""},
+    {x:0,y:0.1,l:""},{x:0,y:0.09,l:""},{x:0,y:0.04,l:""},
+    {x:0,y:0.02,l:""},{x:0,y:0.02,l:""},
+];
+
+const bothTools = DEV_DATA.filter(d => d.x > 0 && d.y > 0);
+const cursorOnly = DEV_DATA.filter(d => d.x > 0 && d.y === 0);
+const claudeOnly = DEV_DATA.filter(d => d.x === 0 && d.y > 0);
+
+new Chart(document.getElementById('devScatterChart'), {
+    type: 'scatter',
     data: {
-        labels: growthLabels,
         datasets: [
             {
-                label: 'Cursor (avg requests/dev)',
-                data: cursorAvg.map(v => Math.round((v / cursorBase) * 100)),
-                borderColor: '#a78bfa',
-                backgroundColor: 'rgba(167, 139, 250, 0.1)',
-                fill: true,
-                tension: 0.4,
-                borderWidth: 3,
-                pointRadius: 6,
-                pointBackgroundColor: '#a78bfa'
+                label: 'Both Cursor + Claude',
+                data: bothTools,
+                backgroundColor: 'rgba(52, 211, 153, 0.7)',
+                borderColor: '#34d399',
+                borderWidth: 1,
+                pointRadius: function(ctx) {
+                    const d = ctx.raw;
+                    if (!d) return 5;
+                    const score = (d.x / 1000) + d.y;
+                    return Math.min(Math.max(score * 0.8 + 4, 4), 16);
+                },
+                pointHoverRadius: 10
             },
             {
-                label: 'Claude (avg output tokens/dev)',
-                data: claudeAvg.map(v => Math.round((v / claudeBase) * 100)),
+                label: 'Cursor Only',
+                data: cursorOnly,
+                backgroundColor: 'rgba(167, 139, 250, 0.5)',
+                borderColor: '#a78bfa',
+                borderWidth: 1,
+                pointRadius: function(ctx) {
+                    const d = ctx.raw;
+                    if (!d) return 4;
+                    return Math.min(Math.max(d.x / 600 + 3, 3), 14);
+                },
+                pointHoverRadius: 8
+            },
+            {
+                label: 'Claude Only',
+                data: claudeOnly,
+                backgroundColor: 'rgba(251, 146, 60, 0.6)',
                 borderColor: '#fb923c',
-                backgroundColor: 'rgba(251, 146, 60, 0.1)',
-                fill: true,
-                tension: 0.4,
-                borderWidth: 3,
-                pointRadius: 6,
-                pointBackgroundColor: '#fb923c'
+                borderWidth: 1,
+                pointRadius: function(ctx) {
+                    const d = ctx.raw;
+                    if (!d) return 4;
+                    return Math.min(Math.max(d.y * 1.2 + 3, 3), 14);
+                },
+                pointHoverRadius: 8
             }
         ]
     },
     options: {
-        ...chartDefaults,
+        responsive: true,
+        maintainAspectRatio: false,
         scales: {
-            ...chartDefaults.scales,
+            x: {
+                ...chartDefaults.scales.x,
+                title: { display: true, text: 'Cursor Total Requests', color: '#9aa0a6' },
+                beginAtZero: true
+            },
             y: {
                 ...chartDefaults.scales.y,
-                beginAtZero: false,
-                title: { display: true, text: '% of Baseline (Jul 25 = 100%)', color: '#9aa0a6' },
-                ticks: {
-                    ...chartDefaults.scales.y.ticks,
-                    callback: function(val) { return val + '%'; }
-                }
+                title: { display: true, text: 'Claude Output Tokens (Millions)', color: '#9aa0a6' },
+                beginAtZero: true
             }
         },
         plugins: {
@@ -1220,12 +1285,12 @@ new Chart(document.getElementById('avgUsageGrowthChart'), {
                 ...chartDefaults.plugins.tooltip,
                 callbacks: {
                     label: function(ctx) {
-                        const idx = ctx.dataIndex;
-                        if (ctx.datasetIndex === 0) {
-                            return `Cursor: ${ctx.raw}% (${cursorAvg[idx].toFixed(0)} req/dev)`;
-                        } else {
-                            return `Claude: ${ctx.raw}% (${(claudeAvg[idx]*1000).toFixed(0)}K tokens/dev)`;
-                        }
+                        const d = ctx.raw;
+                        const name = d.l || 'Developer';
+                        const parts = [name];
+                        if (d.x > 0) parts.push(`Cursor: ${d.x.toLocaleString()} requests`);
+                        if (d.y > 0) parts.push(`Claude: ${d.y.toFixed(2)}M tokens`);
+                        return parts;
                     }
                 }
             }
