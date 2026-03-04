@@ -406,6 +406,7 @@
             <div class="chart-card full-width">
                 <h3>Developer AI Adoption Map (each dot = 1 developer)</h3>
                 <div class="chart-container tall"><canvas id="devScatterChart"></canvas></div>
+                <p style="color: #9aa0a6; font-size: 0.8rem; margin-top: 12px; text-align: center;">Values represent the average monthly usage per developer (Jul 2025 - Feb 2026). Usage volume does not necessarily indicate effective usage or the amount of code ultimately committed to Git.</p>
             </div>
         </div>
     </div>
@@ -1165,53 +1166,74 @@ new Chart(document.getElementById('claudeTiersChart'), {
     }
 });
 
-// Developer AI Adoption Scatter
+// Developer AI Adoption Scatter (Monthly Averages, Jul 25 - Feb 26)
 const DEV_DATA = [
-    {x:8377,y:0.39,l:"Dor Rokah"},{x:7865,y:0,l:"Ariel Cohen"},{x:4394,y:0.08,l:"Yahav Vanunu"},
-    {x:4258,y:0,l:"Yonatan Kupeev"},{x:4089,y:0,l:"Eli Lifshitz"},{x:3881,y:0,l:"Omer Adam"},
-    {x:3672,y:0,l:"Itzik Shabtay"},{x:3635,y:0,l:"Moran Turgeman"},{x:3613,y:0,l:"Amit Shimon"},
-    {x:3002,y:0,l:"Yehuda Finkelstein"},{x:2893,y:0,l:"Sefi Piscon"},{x:2860,y:0.03,l:"Oriel Perl"},
-    {x:2665,y:0,l:"Adar Pascal"},{x:2633,y:0.11,l:"Michael Babushkin"},{x:2563,y:1.17,l:"Aviv Shafir"},
-    {x:2538,y:0,l:"Oleh Buhaienko"},{x:2038,y:0,l:"Oleksii Pavlov"},{x:2005,y:6.94,l:"Malka Gloiberman"},
-    {x:1955,y:0,l:"Shay Beer"},{x:1725,y:1.07,l:"Royi Iluz"},{x:1706,y:1.91,l:"Shir Avraham"},
-    {x:1704,y:0,l:"Ori Benezra"},{x:1700,y:0,l:"Tomer L"},{x:1660,y:0.24,l:"Or Kiraly"},
-    {x:1606,y:0,l:"Nir Vashdi"},{x:1571,y:0,l:"Daniel Arama"},{x:1526,y:0.15,l:"Shahar Michaeli"},
-    {x:1518,y:0,l:"Alex Goyerberg"},{x:1505,y:0,l:"Nahum Landau"},{x:1498,y:0,l:"Itamar"},
-    {x:1495,y:0,l:"Stas Obydionnov"},{x:1413,y:0,l:"Aviv Gabay"},{x:1373,y:0.08,l:"Gal Levy"},
-    {x:1367,y:4.38,l:"Shir Merav"},{x:1325,y:0,l:""},{x:1316,y:0,l:"Maksym Malikov"},
-    {x:1308,y:1.08,l:"Shmulik Willinger"},{x:1230,y:0.49,l:"Ruth Miller"},
-    {x:1055,y:0,l:""},{x:1040,y:0,l:"Adam Soffer"},{x:1036,y:0.23,l:"Maor Iancu"},
-    {x:1034,y:0,l:"Oz Bar-Lev"},{x:1016,y:0.56,l:"Nathaniel Maymon"},
-    {x:987,y:0,l:"Roy Eyal"},{x:983,y:0,l:"Ihor Stoianov"},
-    {x:898,y:0,l:""},{x:867,y:0.91,l:"Noa Kolodro"},{x:855,y:0.47,l:"Idan Avrahami"},
-    {x:819,y:0.96,l:"Lilach Birnbaum"},{x:736,y:1.02,l:"Stav Rozenfeld"},
-    {x:672,y:0,l:""},{x:643,y:0,l:""},{x:618,y:0,l:""},{x:614,y:0,l:""},
-    {x:609,y:0,l:""},{x:600,y:0,l:""},{x:596,y:0,l:""},{x:589,y:0,l:""},
-    {x:573,y:0,l:""},{x:565,y:0,l:""},{x:538,y:0,l:""},{x:505,y:0,l:""},
-    {x:490,y:0,l:""},{x:463,y:0,l:""},{x:457,y:0,l:""},{x:437,y:0,l:""},
-    {x:420,y:4.12,l:"Mali Gedalovich"},{x:377,y:0,l:""},{x:372,y:0.07,l:""},
-    {x:356,y:0,l:""},{x:354,y:0,l:""},{x:350,y:0,l:""},{x:349,y:0,l:""},
-    {x:334,y:0,l:""},{x:331,y:0,l:""},{x:311,y:0,l:""},{x:300,y:0,l:""},
-    {x:296,y:0.14,l:""},{x:272,y:0,l:""},{x:268,y:0,l:""},{x:265,y:0,l:""},
-    {x:263,y:0,l:""},{x:262,y:0,l:""},{x:256,y:0,l:""},{x:253,y:0,l:""},
-    {x:245,y:0,l:""},{x:234,y:0,l:""},{x:220,y:0,l:""},{x:216,y:0,l:""},
-    {x:211,y:0,l:""},{x:210,y:0,l:""},{x:190,y:1.69,l:"Samuel Regev"},
-    {x:186,y:0,l:""},{x:167,y:0,l:""},{x:166,y:0,l:""},{x:124,y:0,l:""},
-    {x:118,y:0,l:""},{x:115,y:12.03,l:"Yonatan Benisty"},{x:105,y:0,l:""},
-    {x:99,y:0,l:""},{x:96,y:0,l:""},{x:91,y:0,l:""},{x:80,y:0,l:""},
-    {x:75,y:0,l:""},{x:74,y:0,l:""},{x:71,y:0,l:""},{x:68,y:0,l:""},
-    {x:64,y:0,l:""},{x:62,y:0.09,l:""},{x:62,y:0,l:""},{x:59,y:0,l:""},
-    {x:53,y:0,l:""},{x:35,y:0,l:""},{x:30,y:0,l:""},{x:29,y:0,l:""},
-    {x:26,y:0,l:""},{x:25,y:0,l:""},{x:21,y:0,l:""},{x:15,y:0,l:""},
-    {x:12,y:0,l:""},{x:11,y:0,l:""},{x:5,y:0,l:""},{x:4,y:0,l:""},
-    {x:3,y:0,l:""},{x:2,y:0,l:""},
-    {x:0,y:10.36,l:"Noam"},{x:0,y:7.69,l:"Naama Czitron"},{x:0,y:6.8,l:"Gal Ezra"},
-    {x:0,y:2.18,l:"Lior Itzkovich"},{x:0,y:2.04,l:"Roi Horowitz"},
-    {x:0,y:1.22,l:"Alexander Milikovski"},{x:0,y:0.97,l:"Omer Levy"},
-    {x:0,y:0.93,l:"Omer Zamir"},{x:0,y:0.45,l:"Ben H"},
-    {x:0,y:0.26,l:""},{x:0,y:0.17,l:""},{x:0,y:0.16,l:""},
-    {x:0,y:0.1,l:""},{x:0,y:0.09,l:""},{x:0,y:0.04,l:""},
-    {x:0,y:0.02,l:""},{x:0,y:0.02,l:""},
+    {x:1039.5,y:0.13,l:"Dor Rokah"},{x:972.4,y:0,l:"Ariel Cohen"},
+    {x:595.5,y:0,l:"Dev-1305"},{x:585.2,y:0,l:"Yehuda Finkelstein"},
+    {x:577.2,y:0,l:"Dev-9601"},{x:542.6,y:0.077,l:"Yahav Vanunu"},
+    {x:532.2,y:0,l:"Yonatan Kupeev"},{x:510.9,y:0,l:"Eli Lifshitz"},
+    {x:495.0,y:0,l:"Cristina Modritski"},{x:493.5,y:0,l:"Roy Eyal"},
+    {x:481.7,y:0,l:"Shahar Michaeli"},{x:480.1,y:0,l:"Omer Adam"},
+    {x:458.4,y:0,l:"Itzik Shabtay"},{x:451.6,y:0,l:"Amit Shimon"},
+    {x:451.4,y:0,l:"Moran Turgeman"},{x:426.0,y:0,l:"Ori Benezra"},
+    {x:351.8,y:0,l:"Sefi Piscon"},{x:351.7,y:0,l:"Dev-4901"},
+    {x:349.2,y:0.014,l:"Oriel Perl"},{x:325.9,y:0,l:"Adar Pascal"},
+    {x:324.9,y:0.109,l:"Michael Babushkin"},{x:320.0,y:0.194,l:"Aviv Shafir"},
+    {x:309.5,y:0,l:"Oleh Buhaienko"},{x:254.2,y:0,l:"Oleksii Pavlov"},
+    {x:248.6,y:0.868,l:"Malka Gloiberman"},{x:243.4,y:0,l:"Shay Beer"},
+    {x:228.5,y:0,l:"Dev-4361"},{x:227.8,y:0.73,l:"Shir Merav"},
+    {x:227.8,y:0.025,l:"Gal Levy"},{x:225.2,y:0,l:"Dev-1402"},
+    {x:220.8,y:0,l:"Dev-3878"},{x:215.6,y:0,l:"Royi Iluz"},
+    {x:213.2,y:0.954,l:"Shir Avraham"},{x:212.5,y:0,l:"Tomer L"},
+    {x:207.0,y:0.119,l:"Or Kiraly"},{x:199.5,y:0,l:"Nir Vashdi"},
+    {x:194.8,y:0,l:"Daniel Arama"},{x:194.6,y:0,l:"Ihor Stoianov"},
+    {x:189.8,y:0,l:"Alex Goyerberg"},{x:188.1,y:0,l:"Nahum Landau"},
+    {x:187.2,y:0,l:"Itamar"},{x:184.8,y:0,l:"Dev-1761"},
+    {x:184.6,y:0,l:"Stas Obydionnov"},{x:179.0,y:0.508,l:"Stav Rozenfeld"},
+    {x:173.1,y:0,l:"Aviv Gabay"},{x:166.0,y:0,l:"Dev-2133"},
+    {x:164.2,y:0,l:"Maksym Malikov"},{x:156.8,y:0.135,l:"Shmulik Willinger"},
+    {x:156.5,y:0,l:"Idan Morad"},{x:152.2,y:0,l:"Lahav Ararat"},
+    {x:150.0,y:0.246,l:"Ruth Miller"},{x:148.0,y:0.114,l:"Maor Iancu"},
+    {x:142.5,y:0,l:"Jonathan Diga"},{x:142.3,y:0,l:"Adam Soffer"},
+    {x:135.0,y:0,l:"Yehuda Karlinsky"},{x:129.2,y:0,l:"Oz Bar-Lev"},
+    {x:121.5,y:0.094,l:"Nathaniel Maymon"},{x:117.0,y:0,l:"Yair"},
+    {x:116.3,y:0,l:"Dev-1398"},{x:115.6,y:0,l:"Dev-8510"},
+    {x:110.8,y:0,l:"Idan Goshen"},{x:108.4,y:0,l:"Noa Kolodro"},
+    {x:107.6,y:0,l:"Moran Reznik"},{x:107.2,y:0,l:"Vladi Kaplun"},
+    {x:106.9,y:0.118,l:"Idan Avrahami"},{x:102.4,y:0.48,l:"Lilach Birnbaum"},
+    {x:102.2,y:0,l:"Erez Eindor"},{x:101.1,y:0,l:"Dev-0983"},
+    {x:99.3,y:0,l:"Dev-4455"},{x:96.0,y:0,l:"Dev-9540"},
+    {x:93.0,y:0,l:"Dev-6689"},{x:92.6,y:0,l:"Dev-2872"},
+    {x:91.0,y:0,l:"Dev-0007"},{x:89.3,y:0,l:"Anton Zhukovtsov"},
+    {x:89.0,y:0,l:"Dev-3958"},{x:87.7,y:0,l:"Dev-7376"},
+    {x:84.3,y:0,l:"Dev-7254"},{x:84.1,y:0,l:"Nir S"},
+    {x:83.5,y:0,l:"Dev-3953"},{x:83.0,y:0,l:"Shira Agasi"},
+    {x:81.7,y:0,l:"Dev-3961"},{x:80.1,y:0,l:"Inbal Biton"},
+    {x:74.6,y:0,l:"Dev-3169"},{x:72.7,y:0,l:"Yehuda Zargarov"},
+    {x:71.8,y:0,l:"Gal T"},{x:69.9,y:0,l:"Omri Tal"},
+    {x:69.4,y:0,l:"Alex Svyatets"},{x:68.0,y:0,l:"Or Abutbul"},
+    {x:65.8,y:0,l:"Dev-2689"},{x:64.0,y:0,l:"Ilya Stavitski"},
+    {x:62.4,y:0,l:"Daniel T"},{x:59.0,y:0,l:"Dev-3915"},
+    {x:52.5,y:0.588,l:"Mali Gedalovich"},{x:52.5,y:0,l:"Dev-3548"},
+    {x:46.5,y:0.073,l:"Ory Jonay"},{x:44.7,y:0,l:"Dev-8878"},
+    {x:43.8,y:0,l:"Yaroslav Berkutov"},{x:43.7,y:0,l:"Dev-1524"},
+    {x:43.2,y:0,l:"Dev-2433"},{x:42.2,y:0,l:"Yair Giwnewer"},
+    {x:41.3,y:0,l:"Dev-8673"},{x:40.8,y:0,l:"Dev-6477"},
+    {x:38.6,y:0,l:"Hagi Cohen"},{x:37.9,y:0,l:"Nurit Cohen"},
+    {x:37.5,y:0,l:"Dev-0257"},{x:36.5,y:0,l:"Eden Rorman"},
+    {x:36.0,y:0.034,l:"Yonatan Dahan"},{x:35.0,y:0,l:"Ivan Kovnatskyi"},
+    {x:33.1,y:0,l:"Daniel Amar"},{x:30.4,y:0,l:"Pavlo Kuziv"},
+    {x:27.7,y:0,l:"Omer Bennoun"},{x:26.7,y:0,l:"Dor Z"},
+    {x:23.8,y:0.241,l:"Samuel Regev"},{x:21.3,y:0,l:"Oded Rotem"},
+    {x:16.4,y:2.406,l:"Yonatan Benisty"},{x:13.6,y:0,l:"Eden Lip"},
+    {x:10.3,y:0.094,l:"Maor"},{x:10.3,y:0,l:"Tom Cohen"},
+    {x:0,y:1.48,l:"Noam"},{x:0,y:1.133,l:"Gal Ezra"},
+    {x:0,y:1.099,l:"Naama Czitron"},{x:0,y:1.02,l:"Roi Horowitz"},
+    {x:0,y:0.612,l:"Alexander Milikovski"},{x:0,y:0.463,l:"Omer Zamir"},
+    {x:0,y:0.363,l:"Lior Itzkovich"},{x:0,y:0.243,l:"Omer Levy"},
+    {x:0,y:0.162,l:"Naama C"},{x:0,y:0.151,l:"Ben H"},
+    {x:0,y:0.064,l:"Guy Lissak"},{x:0,y:0.043,l:"Ron Nabet"},
+    {x:0,y:0.041,l:"Guy K"},{x:0,y:0.03,l:"Shlomi Ozon"},
 ];
 
 const bothTools = DEV_DATA.filter(d => d.x > 0 && d.y > 0);
@@ -1223,44 +1245,31 @@ new Chart(document.getElementById('devScatterChart'), {
     data: {
         datasets: [
             {
-                label: 'Both Cursor + Claude',
+                label: `Both Cursor + Claude (${bothTools.length})`,
                 data: bothTools,
                 backgroundColor: 'rgba(52, 211, 153, 0.7)',
                 borderColor: '#34d399',
                 borderWidth: 1,
-                pointRadius: function(ctx) {
-                    const d = ctx.raw;
-                    if (!d) return 5;
-                    const score = (d.x / 1000) + d.y;
-                    return Math.min(Math.max(score * 0.8 + 4, 4), 16);
-                },
+                pointRadius: 6,
                 pointHoverRadius: 10
             },
             {
-                label: 'Cursor Only',
+                label: `Cursor Only (${cursorOnly.length})`,
                 data: cursorOnly,
                 backgroundColor: 'rgba(167, 139, 250, 0.5)',
                 borderColor: '#a78bfa',
                 borderWidth: 1,
-                pointRadius: function(ctx) {
-                    const d = ctx.raw;
-                    if (!d) return 4;
-                    return Math.min(Math.max(d.x / 600 + 3, 3), 14);
-                },
-                pointHoverRadius: 8
+                pointRadius: 5,
+                pointHoverRadius: 9
             },
             {
-                label: 'Claude Only',
+                label: `Claude Only (${claudeOnly.length})`,
                 data: claudeOnly,
                 backgroundColor: 'rgba(251, 146, 60, 0.6)',
                 borderColor: '#fb923c',
                 borderWidth: 1,
-                pointRadius: function(ctx) {
-                    const d = ctx.raw;
-                    if (!d) return 4;
-                    return Math.min(Math.max(d.y * 1.2 + 3, 3), 14);
-                },
-                pointHoverRadius: 8
+                pointRadius: 6,
+                pointHoverRadius: 10
             }
         ]
     },
@@ -1270,12 +1279,12 @@ new Chart(document.getElementById('devScatterChart'), {
         scales: {
             x: {
                 ...chartDefaults.scales.x,
-                title: { display: true, text: 'Cursor Total Requests', color: '#9aa0a6' },
+                title: { display: true, text: 'Cursor Avg Requests / Month', color: '#9aa0a6' },
                 beginAtZero: true
             },
             y: {
                 ...chartDefaults.scales.y,
-                title: { display: true, text: 'Claude Output Tokens (Millions)', color: '#9aa0a6' },
+                title: { display: true, text: 'Claude Avg Output Tokens / Month (Millions)', color: '#9aa0a6' },
                 beginAtZero: true
             }
         },
@@ -1286,10 +1295,9 @@ new Chart(document.getElementById('devScatterChart'), {
                 callbacks: {
                     label: function(ctx) {
                         const d = ctx.raw;
-                        const name = d.l || 'Developer';
-                        const parts = [name];
-                        if (d.x > 0) parts.push(`Cursor: ${d.x.toLocaleString()} requests`);
-                        if (d.y > 0) parts.push(`Claude: ${d.y.toFixed(2)}M tokens`);
+                        const parts = [d.l];
+                        if (d.x > 0) parts.push(`Cursor: ${d.x.toLocaleString()} req/mo`);
+                        if (d.y > 0) parts.push(`Claude: ${(d.y * 1000).toFixed(0)}K tokens/mo`);
                         return parts;
                     }
                 }
