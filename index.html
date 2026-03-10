@@ -379,6 +379,16 @@
                 <div class="chart-container tall"><canvas id="codeVolumeChart"></canvas></div>
             </div>
             <div class="chart-card full-width">
+                <h3>Lines Added vs Deleted — Production Only (master/main)</h3>
+                <div class="chart-container tall"><canvas id="masterCodeVolumeChart"></canvas></div>
+                <p style="color: #9aa0a6; font-size: 0.8rem; margin-top: 12px; text-align: center;">Only PRs merged directly to master or main branches. Excludes intermediate PRs (e.g. feature→develop) to avoid double-counting.</p>
+            </div>
+            <div class="chart-card full-width">
+                <h3>Net Codebase Growth (Cumulative Lines Added - Deleted)</h3>
+                <div class="chart-container tall"><canvas id="netGrowthChart"></canvas></div>
+                <p style="color: #9aa0a6; font-size: 0.8rem; margin-top: 12px; text-align: center;">Cumulative net change (additions minus deletions) across all merged PRs, showing how the codebase grew over time.</p>
+            </div>
+            <div class="chart-card full-width">
                 <h3>AI-Generated Code vs Total New Code</h3>
                 <div class="chart-container tall"><canvas id="aiCodeShareChart"></canvas></div>
                 <p style="color: #9aa0a6; font-size: 0.8rem; margin-top: 12px; text-align: center;">* Cursor and Claude AI lines represent code accepted by developers locally, not necessarily committed to Git. Total Lines Added is from merged PRs in Git.</p>
@@ -458,6 +468,23 @@ const CURSOR_DATA = {
     "Dec 25": {avg_dau: 41.4, max_dau: 64, agent_req: 15438, chat_req: 1164, composer_req: 2156, total_req: 18758, tab_accepts: 33462, tab_suggestions: 149676, ai_commits: 3605, ai_lines_added: 212461, ai_lines_deleted: 48900, total_lines_added: 369389, total_lines_deleted: 167808, days: 31},
     "Jan 26": {avg_dau: 40.4, max_dau: 66, agent_req: 16428, chat_req: 887, composer_req: 455, total_req: 17770, tab_accepts: 30951, tab_suggestions: 144580, ai_commits: 3957, ai_lines_added: 292154, ai_lines_deleted: 59252, total_lines_added: 453902, total_lines_deleted: 186958, days: 31},
     "Feb 26": {avg_dau: 45.5, max_dau: 71, agent_req: 15868, chat_req: 32, composer_req: 46, total_req: 15946, tab_accepts: 26053, tab_suggestions: 120969, ai_commits: 4600, ai_lines_added: 455851, ai_lines_deleted: 144285, total_lines_added: 721795, total_lines_deleted: 294019, days: 28},
+};
+
+// ===== MASTER/MAIN CODE VOLUME (PRs merged to master or main only) =====
+const MASTER_CODE_VOLUME = {
+    "Feb 25": {additions: 365291, deletions: 311733},
+    "Mar 25": {additions: 693652, deletions: 533638},
+    "Apr 25": {additions: 481631, deletions: 454392},
+    "May 25": {additions: 654156, deletions: 729158},
+    "Jun 25": {additions: 579041, deletions: 454868},
+    "Jul 25": {additions: 1188917, deletions: 542162},
+    "Aug 25": {additions: 602431, deletions: 437561},
+    "Sep 25": {additions: 689062, deletions: 434363},
+    "Oct 25": {additions: 337407, deletions: 477751},
+    "Nov 25": {additions: 1170005, deletions: 1104867},
+    "Dec 25": {additions: 786706, deletions: 793118},
+    "Jan 26": {additions: 560531, deletions: 333164},
+    "Feb 26": {additions: 891759, deletions: 240088},
 };
 
 // ===== EXACT CODE VOLUME (from GitHub GraphQL - all merged PRs) =====
@@ -1017,6 +1044,95 @@ new Chart(document.getElementById('codeVolumeChart'), {
         scales: {
             ...chartDefaults.scales,
             y: { ...chartDefaults.scales.y, title: { display: true, text: 'Lines (thousands)', color: '#9aa0a6' } }
+        }
+    }
+});
+
+// 10b. Code Volume — Production Only (master/main)
+new Chart(document.getElementById('masterCodeVolumeChart'), {
+    type: 'bar',
+    data: {
+        labels: gitLabels,
+        datasets: [
+            {
+                label: 'Additions',
+                data: gitLabels.map(m => Math.round((MASTER_CODE_VOLUME[m]?.additions || 0) / 1000)),
+                backgroundColor: 'rgba(52, 211, 153, 0.6)',
+                borderColor: '#34d399',
+                borderWidth: 1,
+                borderRadius: 4
+            },
+            {
+                label: 'Deletions',
+                data: gitLabels.map(m => Math.round((MASTER_CODE_VOLUME[m]?.deletions || 0) / 1000)),
+                backgroundColor: 'rgba(248, 113, 113, 0.6)',
+                borderColor: '#f87171',
+                borderWidth: 1,
+                borderRadius: 4
+            },
+            {
+                label: 'Net (Additions - Deletions)',
+                data: gitLabels.map(m => Math.round(((MASTER_CODE_VOLUME[m]?.additions || 0) - (MASTER_CODE_VOLUME[m]?.deletions || 0)) / 1000)),
+                type: 'line',
+                borderColor: '#4a9eff',
+                backgroundColor: 'transparent',
+                borderWidth: 2,
+                pointRadius: 4,
+                pointBackgroundColor: '#4a9eff',
+                tension: 0.3
+            }
+        ]
+    },
+    options: {
+        ...chartDefaults,
+        scales: {
+            ...chartDefaults.scales,
+            y: { ...chartDefaults.scales.y, title: { display: true, text: 'Lines (thousands)', color: '#9aa0a6' } }
+        }
+    }
+});
+
+// 10c. Net Codebase Growth (cumulative)
+const cumulativeNet = [];
+let runningTotal = 0;
+gitLabels.forEach(m => {
+    const add = CODE_VOLUME[m]?.additions || 0;
+    const del = CODE_VOLUME[m]?.deletions || 0;
+    runningTotal += (add - del);
+    cumulativeNet.push(Math.round(runningTotal / 1000));
+});
+new Chart(document.getElementById('netGrowthChart'), {
+    type: 'line',
+    data: {
+        labels: gitLabels,
+        datasets: [{
+            label: 'Cumulative Net Code Growth',
+            data: cumulativeNet,
+            borderColor: '#4a9eff',
+            backgroundColor: 'rgba(74, 158, 255, 0.1)',
+            borderWidth: 3,
+            pointRadius: 5,
+            pointBackgroundColor: '#4a9eff',
+            tension: 0.3,
+            fill: true
+        }]
+    },
+    options: {
+        ...chartDefaults,
+        scales: {
+            ...chartDefaults.scales,
+            y: { ...chartDefaults.scales.y, title: { display: true, text: 'Net Lines Added (thousands)', color: '#9aa0a6' } }
+        },
+        plugins: {
+            ...chartDefaults.plugins,
+            tooltip: {
+                ...chartDefaults.plugins.tooltip,
+                callbacks: {
+                    label: function(ctx) {
+                        return `Net growth: ${ctx.raw >= 0 ? '+' : ''}${ctx.raw.toLocaleString()}K lines`;
+                    }
+                }
+            }
         }
     }
 });
