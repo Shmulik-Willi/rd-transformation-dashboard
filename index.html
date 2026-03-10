@@ -391,7 +391,7 @@
             <div class="chart-card full-width">
                 <h3>AI-Generated Code vs Total New Code</h3>
                 <div class="chart-container tall"><canvas id="aiCodeShareChart"></canvas></div>
-                <p style="color: #9aa0a6; font-size: 0.8rem; margin-top: 12px; text-align: center;">* Cursor and Claude AI lines represent code accepted by developers locally, not necessarily committed to Git. Total Lines Added is from merged PRs in Git.</p>
+                <p style="color: #9aa0a6; font-size: 0.8rem; margin-top: 12px; text-align: center;">* Cursor and Claude AI lines represent code accepted by developers locally, not necessarily committed to Git. Total Lines Added is from PRs merged to master/main (production) only.</p>
             </div>
         </div>
     </div>
@@ -1092,12 +1092,12 @@ new Chart(document.getElementById('masterCodeVolumeChart'), {
     }
 });
 
-// 10c. Net Codebase Growth (cumulative)
+// 10c. Net Codebase Growth (cumulative, master/main only)
 const cumulativeNet = [];
 let runningTotal = 0;
 gitLabels.forEach(m => {
-    const add = CODE_VOLUME[m]?.additions || 0;
-    const del = CODE_VOLUME[m]?.deletions || 0;
+    const add = MASTER_CODE_VOLUME[m]?.additions || 0;
+    const del = MASTER_CODE_VOLUME[m]?.deletions || 0;
     runningTotal += (add - del);
     cumulativeNet.push(Math.round(runningTotal / 1000));
 });
@@ -1154,8 +1154,8 @@ new Chart(document.getElementById('aiCodeShareChart'), {
         labels: gitLabels,
         datasets: [
             {
-                label: 'Total Lines Added (Git)',
-                data: gitLabels.map(m => Math.round((CODE_VOLUME[m]?.additions || 0) / 1000)),
+                label: 'Total Lines Added to Production (master/main)',
+                data: gitLabels.map(m => Math.round((MASTER_CODE_VOLUME[m]?.additions || 0) / 1000)),
                 backgroundColor: 'rgba(154, 160, 166, 0.25)',
                 borderColor: 'rgba(154, 160, 166, 0.5)',
                 borderWidth: 1,
@@ -1197,7 +1197,7 @@ new Chart(document.getElementById('aiCodeShareChart'), {
                 callbacks: {
                     afterBody: function(items) {
                         const idx = items[0].dataIndex;
-                        const total = Math.round((CODE_VOLUME[gitLabels[idx]]?.additions || 0) / 1000);
+                        const total = Math.round((MASTER_CODE_VOLUME[gitLabels[idx]]?.additions || 0) / 1000);
                         const cursor = Math.round((CURSOR_DATA[gitLabels[idx]]?.ai_lines_added || 0) / 1000);
                         const claude = Math.round((CLAUDE_CODE[gitLabels[idx]] || 0) / 1000);
                         const aiTotal = cursor + claude;
